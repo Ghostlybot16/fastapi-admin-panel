@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+
+  # -----------------------------------------------
+  # FASTAPI BACKEND CONTAINER 
+  # - Runs the FastAPI app using Uvicorn 
+  # - Exposes API on http://localhost:8080
+  # -----------------------------------------------
+  web:
+    build: . # Build the container using the Dockerfile in the current directory
+    container_name: fastapi-app
+    ports:
+      - "8080:80" # Map container port 80 to localhost port 8080
+    volumes:
+      - ./app:/app # Mount local app directory code files into the container's app directory
+    depends_on:
+      - database # Wait for the database container to start before this (fastapi-app) runs 
+    networks:
+      - appnet # Connect to custom network for inter-container communication
+
+  # -----------------------------------------------
+  # POSTGRES DATABASE CONTAINER
+  # - Provides a PostgreSQL database
+  # - Configured using .env values 
+  # - Data stored in named Docker volume
+  # ----------------------------------------------- 
+  database:
+    image: postgres:16
+    container_name: postgres-database
+    restart: always # Always restart if the container stops or crashed
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432" # Expose database port 
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - appnet
+
+  # ----------------------------------------------- 
+  # PGADMIN CONTAINER (DB GUI TOOL)
+  # - Web GUI for managing PostgreSQL 
+  # - Access via http://localhost:5050
+  # - Configured using .env values
+  # ----------------------------------------------- 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL} # pgAdmin email
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD} # pgAdmin password
+    ports:
+      - "5050:80" # Access pgAdmin at localhost:5050
+    depends_on:
+      - database # pgAdmin requires the database to be up first 
+    networks:
+      - appnet
+
+volumes:
+  postgres_data:
+    # Named volume for PostgreSQL DB files 
+
+
+networks:
+  appnet: # Isolated internal network
