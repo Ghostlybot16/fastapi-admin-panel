@@ -1,6 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID
 
 
@@ -34,6 +34,19 @@ class UserOut(UserBase):
     """
     id: UUID
     created_at: datetime
+    
+    model_config = {
+        "from_attributes": True,
+        "arbitrary_types_allowed": True
+    }
+
+class UserListResponse(BaseModel):
+    """
+    Response schema for returning a list of users with total count
+
+    """
+    total: int
+    users: List[UserOut]
     
     model_config = {
         "from_attributes": True,
