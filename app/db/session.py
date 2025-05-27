@@ -10,13 +10,15 @@ This module sets up:
 
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import declarative_base
-from app.db.config import settings
+from app.db.config import get_settings
 
 # ---------------------------------------------------------
 # Create the SQLAlchemy Async Engine
 # ---------------------------------------------------------
+settings = get_settings()
+
 engine = create_async_engine(
-    settings.database_url,
+    settings.DATABASE_URL,
     echo=True,
     future=True
 )

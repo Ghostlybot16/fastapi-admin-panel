@@ -3,8 +3,10 @@ venv/
 
 # Ignore .env file 
 .env
+.env.test
 
 # Ignore cache files 
 app/__pycache__/
 app/*/__pycache__/
 alembic/__pycache__/
+tests/__pycache__/

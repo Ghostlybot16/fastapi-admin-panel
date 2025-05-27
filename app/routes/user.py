@@ -65,7 +65,7 @@ async def get_user(user_id: UUID, db: AsyncSession = Depends(get_db)):
     """
     
     # Search for user in database using `user_id` value 
-    database_query_result = await db.execute(select(User).where(User.id == user_id))
+    database_query_result = await db.execute(select(User).where(User.id == str(user_id)))
     user_info_from_db = database_query_result.scalar_one_or_none()
     
     if not user_info_from_db: # Error message if user information not found in database

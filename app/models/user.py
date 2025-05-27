@@ -1,6 +1,6 @@
 import uuid
-from sqlalchemy import Column, Integer, String, DateTime, func
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, String, DateTime, func
+# from sqlalchemy.dialects.postgresql import UUID
 from app.db.session import Base
 
 class User(Base):
@@ -19,7 +19,7 @@ class User(Base):
     
     __tablename__ = "users"
     
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4) # UUID v4 as primary key
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4())) # String based UUID for SQLite
     email = Column(String(255), unique=True, nullable=False, index=True) # User's email address, must be unique
     full_name = Column(String(255), nullable=True) # Optional full name for display
     hashed_password = Column(String(255), nullable=False) # Hashed password for secure storage
